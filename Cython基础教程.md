@@ -9,11 +9,11 @@ Cython就是Python：几乎所有的Python代码都是有效的Cython代码。�
 由于Cython可以接受几乎所有有效的python源文件，在我们Cython的启程之路上最大的拦路虎之一就是如何去编译你的拓展文件。
 
 让我们从标准的python hello world开始：
-```Python
+```cython
 print("Hello World")
 ```
 将这段代码保存为`helloworld.pyx`。现在我们需要创建一个`setup.py`，这就像一个python Makefile。你的`setup.py`应该像这样：
-```Python
+```cython
 from distutils.core import setup
 from Cython.Build import cythonize
 
@@ -23,29 +23,29 @@ setup(
 ```
 使用下面的命令行选项来建立你的Cython文件：
 ```
-$ python setup.py build_ext --inplace`
+$ python setup.py build_ext --inplace
 ```
 在unix系统中，这行命令会在你的本地文件夹里创建一个叫做`helloworld.so`的文件；而在Windows中它叫`helloworld.pyd`。现在，运行你的python解释器，然后把这个文件看成一个普通的python模块，简单地import它就可以使用了。
-```Python
+```cython
 >>> import helloworld
 Hello World
 ```
 恭喜！你现在已经知道如何去创建一个Cython拓展了。但是，这个例子会给人一种不知道Cython有何优势的感觉，所以我们会来一个更有现实意义的例子。
 ## pyximport：为开发者准备的Cython编译
 如果你的模块不需要任何外部的C库或者特殊的安装方式，你可以直接使用pyximport模块。这个模块由Paul Prescod开发，用来直接使用import来载入`.pyx`文件，而不需要在你每次更改代码的时候都重新跑一遍你的setup.py文件。它与Cython一起发布和安装，使用方法如下：
-```Python
+```cython
 >>> import pyximport; pyximport.install()
 >>> import helloworld
 Hello World
 ```
 Pyximport模块也支持对普通的Python模块实验性的编译。这可以让你在Python导入的每一个`.pyx`和`.py`模块上自动运行Cython，包括标准库和被安装的包。Cython在编译大量Python模块的时候也会失败，此时import机制将会回溯，转而去载入Python源模块。`.py`的import机制可以被这样安装：
-```python
+```cython
 >>> pyximport.install(pyimport=True)
 ```
 注意，现在已经不推荐在终端用户侧使用Pyximport的创建代码了，因为它会hook上import系统。对终端用户来说，最好的方法时提供wheel包形式的二进制预创建包。
 ## 斐波那契函数
 Python的官方教程里有一个简单的斐波那契函数：
-```python
+```cython
 from __future__ import print_function
 
 def fib(n):
@@ -155,7 +155,7 @@ return result_as_list
 最后，我们返回了一个结果的列表。
 
 使用Cython编译器，我们编译`primes.pyx`从而生成一个拓展模块。我们可以在交互的解释器里试试这个拓展模块：
-```python
+```cython
 >>> import primes
 >>> primes.primes(10)
 [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]
@@ -173,7 +173,7 @@ Cython为我们提供了一种方式，让我们可以看到Python对象和Pytho
 我们可以看到这里做了一些检查。因为Cython默认使用Python的行为，所以它会像Python一样在运行时做除法检查。你可以在使用[编译指令](http://docs.cython.org/en/latest/src/userguide/source_files_and_compilation.html#compiler-directives)时禁用这项检查。
 
 现在，即使我们做除法检查，我们也可以看看程序运行的速度。我们写一个Python版的相同的程序：
-```python
+```cython
 def primes_python(nb_primes):
     p = []
     n = 2
@@ -190,7 +190,7 @@ def primes_python(nb_primes):
     return p
 ```
 我们也可以直接使用`.py`文件，但使用Cython来编译它。让我们使用`primes_python`，把它的函数名改为`primes_python_compiled`，在不改变任何代码的情况下使用Cython编译它。我们也可以将文件名修改为`example_py_cy.py`来区分这个文件。现在`setup.py`是这样：
-```python
+```cython
 from distutils.core import setup
 from Cython.Build import cythonize
 
@@ -261,4 +261,4 @@ def primes(unsigned int nb_primes):
 关于更多在Cython中使用C++的细节，请看[在Cython中使用C++](http://docs.cython.org/en/latest/src/userguide/wrapping_CPlusPlus.html#wrapping-cplusplus)。
 
 ## 语言细节
-更多关于Cython语言请看[语言基础](http://docs.cython.org/en/latest/src/userguide/language_basics.html#language-basics)。若要在数值计算环境中直接使用Cython，请看[Typed Memoryviews](http://docs.cython.org/en/latest/src/userguide/memoryviews.html#memoryviews).
+更多关于Cython语言请看[语言基础](http://docs.cython.org/en/latest/src/userguide/language_basics.html#language-basics)。若要在数值计算环境中直接使用Cython，请看[类型化内存视图](http://docs.cython.org/en/latest/src/userguide/memoryviews.html#memoryviews).
