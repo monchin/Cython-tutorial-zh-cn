@@ -84,7 +84,7 @@ $ python setup.py build_ext --inplace
 2        cdef int n, i, len_p
 3        cdef int p[1000]
 4        if nb_primes > 1000:
-5        nb_primes = 1000
+5            nb_primes = 1000
 6   
 7        len_p = 0  # p中当前元素的数量
 8        n = 2
@@ -218,7 +218,7 @@ python -m timeit -s 'from example_py_cy import primes_python_compiled' 'primes_p
 python -m timeit -s 'from example import primes' 'primes(1000)'
 1000 loops, best of 3: 1.65 msec per loop
 ```
-`primes_python`的cythonize版本比Python的版本速度快一倍，而我们并没有改代码。而Cython版本更是比Python版本的速度快了13倍！怎么解释？
+`primes_python`的Cython版本比Python的版本速度快一倍，而我们并没有改代码。而Cython版本更是比Python版本的速度快了13倍！怎么解释？
 
 多种因素：
 * 这个程序中，每一行只有少量的计算，所以python解释器的总开销就非常重要了。如果需要做大量的计算情况就不一样了。比如Numpy。
